@@ -7,52 +7,71 @@ namespace Infrastructure.MIDIInput
     {
         private MidiIn? _midiIn;
         public event Action<MidiEventData> OnMidiEventReceived = delegate { };
-        private readonly Dictionary<int, long> _noteStartTimes = new(); // Press time of each note
+        private readonly Dictionary<int, long> _noteStartTimes = new();
+        private readonly Dictionary<int, int> _noteVelocities = new();
 
         public void StartListening(int midiInDevice)
         {
             if (_midiIn == null)
             {
                 _midiIn = new MidiIn(midiInDevice);
+                _midiIn.MessageReceived += MidiIn_MessageReceived;
+                _midiIn.ErrorReceived += (s, e) => Debug.WriteLine($"MIDI Error: {e}");
             }
             _midiIn.Start();
             Debug.WriteLine($"Listening on {MidiIn.DeviceInfo(midiInDevice).ProductName}...");
         }
-        private void midiIn_MessageReceived(object sender, MidiInMessageEventArgs e)
+        private void MidiIn_MessageReceived(object? sender, MidiInMessageEventArgs e)
         {
-            // Check if MIDI event is not null and check connection (AutoSensing)
             if (e.MidiEvent != null && e.MidiEvent.CommandCode == MidiCommandCode.AutoSensing)
             {
                 return;
             }
 
-            if (e.MidiEvent is NoteOnEvent noteOn && noteOn.Velocity > 0)
+            if (e.MidiEvent is NoteOnEvent noteOn)
             {
-                _noteStartTimes[noteOn.NoteNumber] = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
-            }
-            else if (e.MidiEvent is NoteEvent noteEvent &&
-                    (noteEvent.CommandCode == MidiCommandCode.NoteOff ||
-                     (noteEvent.CommandCode == MidiCommandCode.NoteOn && noteEvent.Velocity == 0)))
-            {
-                if (_noteStartTimes.ContainsKey(noteEvent.NoteNumber))
+                Debug.WriteLine($"Note On: {noteOn.NoteNumber}, Velocity: {noteOn.Velocity}");
+                if (noteOn.Velocity > 0)
                 {
-                    long startTime = _noteStartTimes[noteEvent.NoteNumber];
-                    long endTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
-                    double duration = (endTime - startTime) / 1000.0;
-
-                    var midiEvent = new MidiEventData
-                    {
-                        Timestamp = startTime,
-                        Note = noteEvent.NoteName,
-                        Velocity = noteEvent.Velocity,
-                        Duration = duration,
-                        Source = "Device"
-                    };
-                    Debug.WriteLine($"Note: {midiEvent.Note}, Velocity: {midiEvent.Velocity}, Duration: {midiEvent.Duration}");
-
-                    _noteStartTimes.Remove(noteEvent.NoteNumber); // Видаляємо запис про ноту
-                    OnMidiEventReceived(midiEvent); // Відправляємо в GUI
+                    _noteStartTimes[noteOn.NoteNumber] = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+                    _noteVelocities[noteOn.NoteNumber] = noteOn.Velocity;
                 }
+                else
+                {
+                    HandleNoteEvent(noteOn.NoteNumber, noteOn.NoteName);
+                }               
+            }
+            else if (e.MidiEvent is NoteEvent noteEvent && noteEvent.CommandCode == MidiCommandCode.NoteOff)
+            {
+                Debug.WriteLine($"Note Off: {noteEvent.NoteNumber}");
+                HandleNoteEvent(noteEvent.NoteNumber, noteEvent.NoteName);
+            }
+        }
+        private void HandleNoteEvent(int noteNumber, string noteName)
+        {
+            if (_noteStartTimes.ContainsKey(noteNumber))
+            {
+                long startTime = _noteStartTimes[noteNumber];
+                long endTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+                double duration = (endTime - startTime) / 1000.0;
+                int velocity = _noteVelocities.ContainsKey(noteNumber) ? _noteVelocities[noteNumber] : 0;
+
+                var midiEvent = new MidiEventData
+                {
+                    Timestamp = startTime,
+                    Note = noteName,
+                    Velocity = velocity,
+                    Duration = duration,
+                    Source = "Device"
+                };
+
+                _noteStartTimes.Remove(noteNumber);
+                _noteVelocities.Remove(noteNumber);
+                OnMidiEventReceived?.Invoke(midiEvent);
+            }
+            else
+            {
+                Debug.WriteLine($"Warning: NoteOff received for unknown Note {noteNumber}");
             }
         }
         public void StopListening()
