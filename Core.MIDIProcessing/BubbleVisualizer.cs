@@ -1,6 +1,6 @@
 ﻿namespace Core.MIDIProcessing
 {
-    public class BubbleVisualizer : IVisualGenerator
+    public class BubbleVisualizer : IVisualizer
     {
         private readonly double _windowWidth;
         private readonly double _windowHeight;
