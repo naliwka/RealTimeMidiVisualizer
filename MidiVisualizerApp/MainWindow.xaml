@@ -7,6 +7,33 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
+        
+        <StackPanel Orientation="Horizontal" Grid.Row="0">
+            <TextBlock Text="MIDI Device:" 
+                       VerticalAlignment="Center" Margin="10,0"/>
+            <ComboBox x:Name="MidiDeviceComboBox" 
+                       VerticalAlignment="Top" Width="300" Margin="5"/>
+            <Button Content="Start" 
+                       VerticalAlignment="Top" Width="50" Margin="5"
+                       Click="StartListening_Click"/>
+            <Button Content="Stop" 
+                       VerticalAlignment="Top" Width="50" Margin="5"
+                       Click="StopListening_Click"/>
+        </StackPanel>
+        
+        <Canvas x:Name="MyCanvas" Background="Black" Grid.Row="1"/>
 
+        <StackPanel Grid.Row="2" Orientation="Horizontal">
+            <TextBlock Text="Note:"/>
+            <TextBlock x:Name="NoteText" Foreground="Lime" Margin="5,0"/>
+
+            <TextBlock Text="FPS:" Margin="20,0"/>
+            <TextBlock x:Name="FpsText" Foreground="Lime" Margin="5,0"/>
+        </StackPanel>
     </Grid>
 </Window>

@@ -27,8 +27,8 @@
 
         private double MapVelocityToSize(int velocity)
         {
-            double minSize = 20;
-            double maxSize = 100;
+            double minSize = 3;
+            double maxSize = 150;
             return minSize + ((velocity / 127.0) * (maxSize - minSize));
         }
 
@@ -42,12 +42,6 @@
             if (note.StartsWith('G')) return "#0000FF";
             if (note.StartsWith('A')) return "#4B0082";
             if (note.StartsWith('B')) return "#EE82EE";
-
-            if (note.StartsWith("C#")) return "#FF6666";
-            if (note.StartsWith("D#")) return "#FFB266";
-            if (note.StartsWith("F#")) return "#66CC66";
-            if (note.StartsWith("G#")) return "#6666FF";
-            if (note.StartsWith("A#")) return "#B266FF";
             return "#CCCCCC";
         }
 

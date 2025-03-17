@@ -1,6 +1,6 @@
 ﻿namespace Core.MIDIProcessing
 {
-    public enum  VisulizerType
+    public enum  VisualizerType
     {
         Bubbles,
         WaveLine,
