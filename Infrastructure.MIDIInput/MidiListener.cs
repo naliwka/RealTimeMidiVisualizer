@@ -60,6 +60,7 @@ namespace Infrastructure.MIDIInput
                 {
                     Timestamp = startTime,
                     Note = noteName,
+                    NoteNumber = noteNumber,
                     Velocity = velocity,
                     Duration = duration,
                     Source = "Device"
