@@ -19,6 +19,7 @@ namespace MidiVisualizerApp
     {
         private MidiListener? _midiListener;
         private IVisualizer? _visualizer;
+
         private int _frameCount = 0;
         private DateTime _lastFpsUpdate = DateTime.Now;
 
@@ -67,7 +68,10 @@ namespace MidiVisualizerApp
 
                 _midiListener = new MidiListener();
 
-                _midiListener.OnMidiEventReceived += MidiEventReceived;
+                _midiListener.OnNoteOnReceived += MidiNoteOnReceived;
+
+                _midiListener.OnMidiEventReceived += MidiNoteOffReceived;
+
 
                 _midiListener.StartListening(selectedDevice.Index);
             }
@@ -78,26 +82,38 @@ namespace MidiVisualizerApp
             if (_midiListener != null)
             {
                 _midiListener.StopListening();
+                _midiListener.OnNoteOnReceived -= MidiNoteOnReceived;
+                _midiListener.OnMidiEventReceived -= MidiNoteOffReceived;
 
-                _midiListener.OnMidiEventReceived -= MidiEventReceived;
                 _midiListener = null;
 
                 MessageBox.Show("Stopped listening to MIDI input.",
                                 "MIDI", MessageBoxButton.OK, MessageBoxImage.Information);
                 MyCanvas.Children.Clear();
+                NoteText.Text = "-";
+                FpsText.Text = "0";
             }
         }
 
-        private void MidiEventReceived(MidiEventData midiEvent)
+        private void MidiNoteOnReceived(MidiEventData midiEvent)
         {
             if (_visualizer == null) return;
 
-            Dispatcher.Invoke(() => NoteText.Text = $"{midiEvent.Note}");
-
             var visuals = _visualizer.GenerateVisual(midiEvent);
 
-            Dispatcher.Invoke(() => RenderVisuals(visuals));
+            Dispatcher.Invoke(() =>
+            {
+                RenderVisuals(visuals);
+                NoteText.Text = midiEvent.Note;
+                UpdateFps();
+            });
         }
+
+        private void MidiNoteOffReceived(MidiEventData midiEvent)
+        {
+            Dispatcher.Invoke(UpdateFps);
+        }
+
         private void RenderVisuals(List<VisualElementData> visuals)
         {
             foreach (var visual in visuals)
@@ -117,7 +133,6 @@ namespace MidiVisualizerApp
 
                 AnimateAndRemove(ellipse);
             }
-            UpdateFps();
         }
         private void UpdateFps()
         {
@@ -126,7 +141,7 @@ namespace MidiVisualizerApp
 
             if ((now - _lastFpsUpdate).TotalSeconds >= 1)
             {
-                Dispatcher.Invoke(() => FpsText.Text = $"{_frameCount}");
+                FpsText.Text = $"{_frameCount}";
                 _frameCount = 0;
                 _lastFpsUpdate = now;
             }
