@@ -12,12 +12,15 @@ namespace Infrastructure.MIDIInput
 
         public void StartListening(int midiInDevice)
         {
-            if (_midiIn == null)
+            if (_midiIn != null)
             {
-                _midiIn = new MidiIn(midiInDevice);
-                _midiIn.MessageReceived += MidiIn_MessageReceived;
-                _midiIn.ErrorReceived += (s, e) => Debug.WriteLine($"MIDI Error: {e}");
+                throw new InvalidOperationException("Already listening to MIDI input.");
             }
+
+            _midiIn = new MidiIn(midiInDevice);
+            _midiIn.MessageReceived += MidiIn_MessageReceived;
+            _midiIn.ErrorReceived += (s, e) => Debug.WriteLine($"MIDI Error: {e}");
+
             _midiIn.Start();
             Debug.WriteLine($"Listening on {MidiIn.DeviceInfo(midiInDevice).ProductName}...");
         }
@@ -71,6 +74,7 @@ namespace Infrastructure.MIDIInput
             if (_midiIn != null)
             {
                 _midiIn.Stop();
+                _midiIn.MessageReceived -= MidiIn_MessageReceived;
                 _midiIn.Dispose();
                 _midiIn = null;
             }

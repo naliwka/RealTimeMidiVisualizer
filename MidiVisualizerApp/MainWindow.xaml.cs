@@ -52,6 +52,12 @@ namespace MidiVisualizerApp
 
         private void StartListening_Click(object sender, RoutedEventArgs e)
         {
+            if (_midiListener != null)
+            {
+                MessageBox.Show("Already listening to MIDI input.",
+                                "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
             if (MidiDeviceComboBox.SelectedItem is ComboBoxItem comboBoxItem &&
          comboBoxItem.Content is MidiDeviceItem selectedDevice)
             {
