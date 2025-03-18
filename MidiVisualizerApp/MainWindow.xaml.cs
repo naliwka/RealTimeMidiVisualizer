@@ -1,17 +1,12 @@
-﻿using System.Text;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
 using Core.MIDIProcessing;
 using Infrastructure.MIDIInput;
 using NAudio.Midi;
+using Infrastructure.Logging;
 
 namespace MidiVisualizerApp
 {
@@ -19,6 +14,7 @@ namespace MidiVisualizerApp
     {
         private MidiListener? _midiListener;
         private IVisualizer? _visualizer;
+        private IEventLogger? _logger = new RedisLogger();
 
         private int _frameCount = 0;
         private DateTime _lastFpsUpdate = DateTime.Now;
@@ -111,7 +107,12 @@ namespace MidiVisualizerApp
 
         private void MidiNoteOffReceived(MidiEventData midiEvent)
         {
-            Dispatcher.Invoke(UpdateFps);
+            Dispatcher.Invoke(() =>
+            {
+                UpdateFps();
+                if(EnableLoggingCheckBox.IsChecked == true)
+                    _logger?.Log(midiEvent);
+            });
         }
 
         private void RenderVisuals(List<VisualElementData> visuals)

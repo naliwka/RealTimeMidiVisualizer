@@ -10,6 +10,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Infrastructure.MIDIInput\Infrastructure.MIDIInput.csproj" />
+    <ProjectReference Include="..\Infrastructure.Logging\Infrastructure.Logging.csproj" />
   </ItemGroup>
 
 </Project>
