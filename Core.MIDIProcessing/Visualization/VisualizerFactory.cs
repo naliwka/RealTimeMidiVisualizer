@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Core.MIDIProcessing
+namespace Core.MIDIProcessing.Visualization
 {
     public static class VisualizerFactory
     {

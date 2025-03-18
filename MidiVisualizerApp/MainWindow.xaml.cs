@@ -7,6 +7,7 @@ using Core.MIDIProcessing;
 using Infrastructure.MIDIInput;
 using NAudio.Midi;
 using Infrastructure.Logging;
+using Core.MIDIProcessing.Visualization;
 
 namespace MidiVisualizerApp
 {

@@ -1,4 +1,4 @@
-﻿namespace Core.MIDIProcessing
+﻿namespace Core.MIDIProcessing.Visualization
 {
     public class BubbleVisualizer : IVisualizer
     {
@@ -29,7 +29,7 @@
         {
             double minSize = 3;
             double maxSize = 150;
-            return minSize + ((velocity / 127.0) * (maxSize - minSize));
+            return minSize + velocity / 127.0 * (maxSize - minSize);
         }
 
         private string GetColorForNote(string? note)
@@ -50,5 +50,5 @@
             double noteHeight = noteNumber / 127.0;
             return _windowHeight * (1.0 - noteHeight);
         }
-    }       
+    }
 }
