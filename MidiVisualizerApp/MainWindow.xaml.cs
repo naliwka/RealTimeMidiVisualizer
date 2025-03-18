@@ -8,6 +8,8 @@ using Infrastructure.MIDIInput;
 using NAudio.Midi;
 using Infrastructure.Logging;
 using Core.MIDIProcessing.Visualization;
+using MidiVisualizerApp.Models;
+using System.Windows.Media.Media3D;
 
 namespace MidiVisualizerApp
 {
@@ -23,6 +25,7 @@ namespace MidiVisualizerApp
         public MainWindow()
         {
             InitializeComponent();
+            PopulateVisualizerTypeComboBox();
 
             Loaded += (s, e) =>
             {
@@ -50,9 +53,14 @@ namespace MidiVisualizerApp
             if (MidiDeviceComboBox.Items.Count > 0)
                 MidiDeviceComboBox.SelectedIndex = 0;
         }
+        private VisualizerType GetSelectedVisualizerType()
+        {
+            var selectedItem = VisualizerTypeComboBox.SelectedItem as VisualizerTypeItem;
+            return selectedItem?.Type ?? VisualizerType.Bubbles;
+        }
 
         private void StartListening_Click(object sender, RoutedEventArgs e)
-        {
+        {           
             if (_midiListener != null)
             {
                 MessageBox.Show("Already listening to MIDI input.",
@@ -62,12 +70,11 @@ namespace MidiVisualizerApp
             if (MidiDeviceComboBox.SelectedItem is ComboBoxItem comboBoxItem &&
          comboBoxItem.Content is MidiDeviceItem selectedDevice)
             {
-
                 double width = MyCanvas.ActualWidth;
                 double height = MyCanvas.ActualHeight;
+                var selectedType = GetSelectedVisualizerType();
 
-                _visualizer = VisualizerFactory.CreateVisualizer(
-                    VisualizerType.Bubbles, width, height);
+                _visualizer = VisualizerFactory.CreateVisualizer(selectedType, width, height);
 
                 _midiListener = new MidiListener();
 
@@ -126,20 +133,32 @@ namespace MidiVisualizerApp
         {
             foreach (var visual in visuals)
             {
-                var ellipse = new Ellipse
+                Shape shape = visual.Shape switch
                 {
-                    Width = visual.Size,
-                    Height = visual.Size,
-                    Fill = new SolidColorBrush(
-                        (Color)ColorConverter.ConvertFromString(visual.ColorHex)),
-                    Opacity = visual.Opacity
+                    "Rectangle" => new Rectangle
+                    {
+                        Width = 15,
+                        Height = visual.Size,
+                        Fill = new SolidColorBrush(
+                            (Color)ColorConverter.ConvertFromString(visual.ColorHex)),
+                        Opacity = visual.Opacity
+                    },
+                    "Circle" => new Ellipse
+                    {
+                        Width = visual.Size,
+                        Height = visual.Size,
+                        Fill = new SolidColorBrush(
+                            (Color)ColorConverter.ConvertFromString(visual.ColorHex)),
+                        Opacity = visual.Opacity
+                    },
+                    _ => new Rectangle()
                 };
 
-                Canvas.SetLeft(ellipse, visual.X);
-                Canvas.SetTop(ellipse, visual.Y);
-                MyCanvas.Children.Add(ellipse);
+                Canvas.SetLeft(shape, visual.X);
+                Canvas.SetTop(shape, visual.Y);
+                MyCanvas.Children.Add(shape);
 
-                AnimateAndRemove(ellipse);
+                AnimateAndRemove(shape);
             }
         }
         private void UpdateFps()
@@ -161,20 +180,37 @@ namespace MidiVisualizerApp
 
             timer.Tick += (s, e) =>
             {
-                if (element is Ellipse ellipse)
+                if (element is Shape shape)
                 {
-                    ellipse.Width *= shrinkRate;
-                    ellipse.Height *= shrinkRate;
-                    ellipse.Opacity *= shrinkRate;
+                    if (shape is Ellipse)
+                    {
+                        shape.Width *= shrinkRate;
+                        shape.Height *= shrinkRate;
+                        shape.Opacity *= shrinkRate;
+                    }                   
 
-                    if (ellipse.Opacity < 0.05)
+                    if (shape.Opacity < 0.05)
                     {
                         timer.Stop();
-                        MyCanvas.Children.Remove(ellipse);
+                        MyCanvas.Children.Remove(shape);
                     }
                 }
             };
             timer.Start();
+        }
+        private void PopulateVisualizerTypeComboBox()
+        {
+            var items = Enum.GetValues(typeof(VisualizerType))
+                .Cast<VisualizerType>()
+                .Select(vt => new VisualizerTypeItem
+                {
+                    Type = vt,
+                    DisplayName = vt.ToString().Replace("ColorBars", "Color Bars")
+                })
+                .ToList();
+
+            VisualizerTypeComboBox.ItemsSource = items;
+            VisualizerTypeComboBox.SelectedIndex = 0;
         }
     }
     public class MidiDeviceItem

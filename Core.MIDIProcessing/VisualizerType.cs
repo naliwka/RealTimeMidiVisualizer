@@ -3,7 +3,6 @@
     public enum  VisualizerType
     {
         Bubbles,
-        WaveLine,
-        Bar
+        ColorBars
     }
 }

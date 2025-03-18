@@ -17,7 +17,7 @@
             <TextBlock Text="MIDI Device:" 
                        VerticalAlignment="Center" Margin="10,0"/>
             <ComboBox x:Name="MidiDeviceComboBox" 
-                       VerticalAlignment="Top" Width="300" Margin="5"/>
+                       VerticalAlignment="Top" Width="200" Margin="5"/>
             <Button Content="Start" 
                        VerticalAlignment="Top" Width="50" Margin="5"
                        Click="StartListening_Click"/>
@@ -27,6 +27,9 @@
             <CheckBox x:Name="EnableLoggingCheckBox" 
                       Content="Enable logging" 
                       VerticalAlignment="Center" Margin="10,0" IsChecked="False"/>
+            <ComboBox x:Name="VisualizerTypeComboBox" 
+                       VerticalAlignment="Top" Width="150" Margin="5"
+                       SelectedIndex="0" DisplayMemberPath="DisplayName"/>
         </StackPanel>
         
         <Canvas x:Name="MyCanvas" Background="Black" Grid.Row="1"/>

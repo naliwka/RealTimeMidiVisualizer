@@ -14,6 +14,8 @@ namespace Core.MIDIProcessing.Visualization
             {
                 case VisualizerType.Bubbles:
                     return new BubbleVisualizer(windowWidth, windowHeight);
+                case VisualizerType.ColorBars:
+                    return new ColorBarsVisualizer(windowWidth, windowHeight);
                 default:
                     throw new ArgumentException("Unknown visualizer type");
             }
