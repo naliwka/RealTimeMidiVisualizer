@@ -74,7 +74,7 @@ namespace Core.MIDIProcessing.Visualization
         private double MapVelocityToHeight(int velocity)
         {
             const double minHeight = 20;
-            const double maxHeight = 200;
+            double maxHeight = _windowHeight * 0.7;
             double actualHeight = minHeight + velocity / 127.0 * (maxHeight - minHeight);
 
             return actualHeight;
