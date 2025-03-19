@@ -16,7 +16,7 @@ namespace MidiVisualizerApp.Helpers
             Shape shape = visual.Shape
                 switch
             {
-                "Ellipse" => new Ellipse
+                "Circle" => new Ellipse
                 {
                     Width = visual.Size,
                     Height = visual.Size,
