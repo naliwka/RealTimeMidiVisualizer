@@ -11,6 +11,7 @@ using Core.MIDIProcessing.Visualization;
 using MidiVisualizerApp.Models;
 using System.Windows.Media.Media3D;
 using Core.MIDIProcessing.Helpers;
+using MidiVisualizerApp.Helpers;
 
 namespace MidiVisualizerApp
 {
@@ -134,31 +135,10 @@ namespace MidiVisualizerApp
         {
             foreach (var visual in visuals)
             {
-                Shape shape = visual.Shape switch
-                {
-                    "Rectangle" => new Rectangle
-                    {
-                        Width = 15,
-                        Height = visual.Size,
-                        Fill = new SolidColorBrush(
-                            (Color)ColorConverter.ConvertFromString(visual.ColorHex)),
-                        Opacity = visual.Opacity
-                    },
-                    "Circle" => new Ellipse
-                    {
-                        Width = visual.Size,
-                        Height = visual.Size,
-                        Fill = new SolidColorBrush(
-                            (Color)ColorConverter.ConvertFromString(visual.ColorHex)),
-                        Opacity = visual.Opacity
-                    },
-                    _ => new Rectangle()
-                };
-
+                Shape shape = ShapeFactory.CreateShape(visual);
                 Canvas.SetLeft(shape, visual.X);
                 Canvas.SetTop(shape, visual.Y);
                 MyCanvas.Children.Add(shape);
-
                 AnimateAndRemove(shape);
             }
         }
