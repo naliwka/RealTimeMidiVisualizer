@@ -1,4 +1,4 @@
-﻿namespace Core.MIDIProcessing
+﻿namespace Core.MIDIProcessing.Logging
 {
     public interface IEventLogger
     {

@@ -1,6 +1,7 @@
 ﻿using StackExchange.Redis;
 using System.Text.Json;
 using Core.MIDIProcessing;
+using Core.MIDIProcessing.Logging;
 
 namespace Infrastructure.Logging
 {
