@@ -14,7 +14,7 @@ namespace Core.MIDIProcessing.Visualization
         private readonly NoteColorProvider _colorProvider;
 
         private readonly List<VisualElementData> _bars = new();
-        private const double ShiftSpeed = 5;
+        private const double ShiftSpeed = 20;
 
         public ColorBarsVisualizer(double windowWidth, double windowHeight, NoteColorProvider colorProvider)
         {
