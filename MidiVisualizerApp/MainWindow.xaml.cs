@@ -29,11 +29,9 @@ namespace MidiVisualizerApp
             InitializeComponent();
             PopulateVisualizerTypeComboBox();
 
-            Loaded += (s, e) =>
-            {
-                LoadMidiDevices();
-            };
+            Loaded += (s, e) => LoadMidiDevices();
         }
+
         private void LoadMidiDevices()
         {
             MidiDeviceComboBox.Items.Clear();
@@ -55,6 +53,7 @@ namespace MidiVisualizerApp
             if (MidiDeviceComboBox.Items.Count > 0)
                 MidiDeviceComboBox.SelectedIndex = 0;
         }
+
         private VisualizerType GetSelectedVisualizerType()
         {
             var selectedItem = VisualizerTypeComboBox.SelectedItem as VisualizerTypeItem;
@@ -62,31 +61,37 @@ namespace MidiVisualizerApp
         }
 
         private void StartListening_Click(object sender, RoutedEventArgs e)
-        {           
+        {
             if (_midiListener != null)
             {
-                MessageBox.Show("Already listening to MIDI input.",
-                                "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show("Already listening to MIDI input.", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
+
             if (MidiDeviceComboBox.SelectedItem is ComboBoxItem comboBoxItem &&
-         comboBoxItem.Content is MidiDeviceItem selectedDevice)
+                comboBoxItem.Content is MidiDeviceItem selectedDevice)
             {
-                double width = MyCanvas.ActualWidth;
-                double height = MyCanvas.ActualHeight;
-                var selectedType = GetSelectedVisualizerType();
-                var colorProvider = new NoteColorProvider();
-
-                _visualizer = VisualizerFactory.CreateVisualizer(selectedType, width, height, colorProvider);
-
-                _midiListener = new MidiListener();
-
-                _midiListener.OnNoteOnReceived += MidiNoteOnReceived;
-
-                _midiListener.OnMidiEventReceived += MidiNoteOffReceived;
-
-                _midiListener.StartListening(selectedDevice.Index);
+                InitializeVisualizer();
+                InitializeMidiListener(selectedDevice.Index);
             }
+        }
+
+        private void InitializeVisualizer()
+        {
+            double width = MyCanvas.ActualWidth;
+            double height = MyCanvas.ActualHeight;
+            var selectedType = GetSelectedVisualizerType();
+            var colorProvider = new NoteColorProvider();
+
+            _visualizer = VisualizerFactory.CreateVisualizer(selectedType, width, height, colorProvider);
+        }
+
+        private void InitializeMidiListener(int deviceIndex)
+        {
+            _midiListener = new MidiListener();
+            _midiListener.OnNoteOnReceived += MidiNoteOnReceived;
+            _midiListener.OnMidiEventReceived += MidiNoteOffReceived;
+            _midiListener.StartListening(deviceIndex);
         }
 
         private void StopListening_Click(object sender, RoutedEventArgs e)
@@ -96,15 +101,18 @@ namespace MidiVisualizerApp
                 _midiListener.StopListening();
                 _midiListener.OnNoteOnReceived -= MidiNoteOnReceived;
                 _midiListener.OnMidiEventReceived -= MidiNoteOffReceived;
-
                 _midiListener = null;
 
-                MessageBox.Show("Stopped listening to MIDI input.",
-                                "MIDI", MessageBoxButton.OK, MessageBoxImage.Information);
-                MyCanvas.Children.Clear();
-                NoteText.Text = "-";
-                FpsText.Text = "0";
+                MessageBox.Show("Stopped listening to MIDI input.", "MIDI", MessageBoxButton.OK, MessageBoxImage.Information);
+                ClearCanvas();
             }
+        }
+
+        private void ClearCanvas()
+        {
+            MyCanvas.Children.Clear();
+            NoteText.Text = "-";
+            FpsText.Text = "0";
         }
 
         private void MidiNoteOnReceived(MidiEventData midiEvent)
@@ -126,7 +134,7 @@ namespace MidiVisualizerApp
             Dispatcher.Invoke(() =>
             {
                 UpdateFps();
-                if(EnableLoggingCheckBox.IsChecked == true)
+                if (EnableLoggingCheckBox.IsChecked == true)
                     _logger?.Log(midiEvent);
             });
         }
@@ -142,6 +150,7 @@ namespace MidiVisualizerApp
                 AnimateAndRemove(shape);
             }
         }
+
         private void UpdateFps()
         {
             _frameCount++;
@@ -154,6 +163,7 @@ namespace MidiVisualizerApp
                 _lastFpsUpdate = now;
             }
         }
+
         private void AnimateAndRemove(UIElement element)
         {
             var timer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(30) };
@@ -168,7 +178,7 @@ namespace MidiVisualizerApp
                         shape.Width *= shrinkRate;
                         shape.Height *= shrinkRate;
                         shape.Opacity *= shrinkRate;
-                    }                   
+                    }
 
                     if (shape.Opacity < 0.05)
                     {
@@ -179,6 +189,7 @@ namespace MidiVisualizerApp
             };
             timer.Start();
         }
+
         private void PopulateVisualizerTypeComboBox()
         {
             var items = Enum.GetValues(typeof(VisualizerType))
