@@ -2,8 +2,8 @@
 using System.Windows.Shapes;
 using System.Windows;
 using System;
-using Core.MIDIProcessing;
 using MidiVisualizerApp.Models;
+using Core.MIDIProcessing.Models;
 
 namespace MidiVisualizerApp.Helpers
 {

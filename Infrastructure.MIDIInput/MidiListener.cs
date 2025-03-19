@@ -1,5 +1,5 @@
 ﻿using System.Diagnostics;
-using Core.MIDIProcessing;
+using Core.MIDIProcessing.Models;
 using NAudio.Midi;
 namespace Infrastructure.MIDIInput
 {

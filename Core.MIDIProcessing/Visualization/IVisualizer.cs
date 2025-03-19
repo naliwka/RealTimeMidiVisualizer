@@ -1,4 +1,6 @@
-﻿namespace Core.MIDIProcessing.Visualization
+﻿using Core.MIDIProcessing.Models;
+
+namespace Core.MIDIProcessing.Visualization
 {
     public interface IVisualizer
     {

@@ -1,4 +1,4 @@
-﻿namespace Core.MIDIProcessing
+﻿namespace Core.MIDIProcessing.Models
 {
     public class VisualElementData
     {
@@ -6,8 +6,8 @@
         public double Y { get; set; }
         public double Size { get; set; }
         public string? ColorHex { get; set; }
-        public string? Shape { get; set; }  
+        public string? Shape { get; set; }
         public double Opacity { get; set; }
-        public double Rotation { get; set; }  
+        public double Rotation { get; set; }
     }
 }

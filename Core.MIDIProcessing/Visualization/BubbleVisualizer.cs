@@ -1,4 +1,5 @@
 ﻿using Core.MIDIProcessing.Helpers;
+using Core.MIDIProcessing.Models;
 
 namespace Core.MIDIProcessing.Visualization
 {

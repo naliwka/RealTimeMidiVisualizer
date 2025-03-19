@@ -1,7 +1,7 @@
 ﻿using StackExchange.Redis;
 using System.Text.Json;
-using Core.MIDIProcessing;
 using Core.MIDIProcessing.Logging;
+using Core.MIDIProcessing.Models;
 
 namespace Infrastructure.Logging
 {

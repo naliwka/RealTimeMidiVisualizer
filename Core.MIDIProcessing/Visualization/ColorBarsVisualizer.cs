@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Core.MIDIProcessing.Helpers;
+using Core.MIDIProcessing.Models;
 
 namespace Core.MIDIProcessing.Visualization
 {

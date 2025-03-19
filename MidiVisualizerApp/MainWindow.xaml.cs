@@ -13,6 +13,7 @@ using System.Windows.Media.Media3D;
 using Core.MIDIProcessing.Helpers;
 using MidiVisualizerApp.Helpers;
 using Core.MIDIProcessing.Logging;
+using Core.MIDIProcessing.Models;
 
 namespace MidiVisualizerApp
 {
