@@ -1,13 +1,18 @@
-﻿namespace Core.MIDIProcessing.Visualization
+﻿using Core.MIDIProcessing.Helpers;
+
+namespace Core.MIDIProcessing.Visualization
 {
     public class BubbleVisualizer : IVisualizer
     {
         private readonly double _windowWidth;
         private readonly double _windowHeight;
-        public BubbleVisualizer(double windowWidth, double windowHeight)
+        private readonly NoteColorProvider _colorProvider;
+
+        public BubbleVisualizer(double windowWidth, double windowHeight, NoteColorProvider colorProvider)
         {
             _windowWidth = windowWidth;
             _windowHeight = windowHeight;
+            _colorProvider = colorProvider ?? new NoteColorProvider();
         }
         public List<VisualElementData> GenerateVisual(MidiEventData midiEvent)
         {
@@ -18,7 +23,7 @@
                 X = rnd.NextDouble() * _windowWidth,
                 Y = GetNoteY(midiEvent.NoteNumber),
                 Size = MapVelocityToSize(midiEvent.Velocity),
-                ColorHex = GetColorForNote(midiEvent.Note),
+                ColorHex = _colorProvider.GetColorForNote(midiEvent.Note),
                 Shape = "Circle",
                 Opacity = 0.75
             };
@@ -30,19 +35,6 @@
             double minSize = 3;
             double maxSize = 150;
             return minSize + velocity / 127.0 * (maxSize - minSize);
-        }
-
-        private string GetColorForNote(string? note)
-        {
-            if (note == null) return "#CCCCCC";
-            if (note.StartsWith('C')) return "#FF0000";
-            if (note.StartsWith('D')) return "#FFA500";
-            if (note.StartsWith('E')) return "#FFFF00";
-            if (note.StartsWith('F')) return "#008000";
-            if (note.StartsWith('G')) return "#0000FF";
-            if (note.StartsWith('A')) return "#4B0082";
-            if (note.StartsWith('B')) return "#EE82EE";
-            return "#CCCCCC";
         }
 
         private double GetNoteY(int noteNumber)

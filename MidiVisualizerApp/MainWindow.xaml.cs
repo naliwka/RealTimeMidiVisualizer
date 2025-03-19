@@ -10,6 +10,7 @@ using Infrastructure.Logging;
 using Core.MIDIProcessing.Visualization;
 using MidiVisualizerApp.Models;
 using System.Windows.Media.Media3D;
+using Core.MIDIProcessing.Helpers;
 
 namespace MidiVisualizerApp
 {
@@ -73,15 +74,15 @@ namespace MidiVisualizerApp
                 double width = MyCanvas.ActualWidth;
                 double height = MyCanvas.ActualHeight;
                 var selectedType = GetSelectedVisualizerType();
+                var colorProvider = new NoteColorProvider();
 
-                _visualizer = VisualizerFactory.CreateVisualizer(selectedType, width, height);
+                _visualizer = VisualizerFactory.CreateVisualizer(selectedType, width, height, colorProvider);
 
                 _midiListener = new MidiListener();
 
                 _midiListener.OnNoteOnReceived += MidiNoteOnReceived;
 
                 _midiListener.OnMidiEventReceived += MidiNoteOffReceived;
-
 
                 _midiListener.StartListening(selectedDevice.Index);
             }
