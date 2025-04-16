@@ -80,12 +80,10 @@ namespace MidiVisualizerApp
 
         private void InitializeVisualizer()
         {
-            double width = MyCanvas.ActualWidth;
-            double height = MyCanvas.ActualHeight;
             var selectedType = GetSelectedVisualizerType();
             var colorProvider = new NoteColorProvider();
 
-            _visualizer = VisualizerFactory.CreateVisualizer(selectedType, width, height, colorProvider);
+            _visualizer = VisualizerFactory.CreateVisualizer(selectedType, colorProvider);
         }
 
         private void InitializeMidiListener(int deviceIndex)
@@ -119,9 +117,12 @@ namespace MidiVisualizerApp
 
         private void MidiNoteOnReceived(MidiEventData midiEvent)
         {
+            double width = MyCanvas.ActualWidth;
+            double height = MyCanvas.ActualHeight;
+
             if (_visualizer == null) return;
 
-            var visuals = _visualizer.GenerateVisual(midiEvent);
+            var visuals = _visualizer.GenerateVisual(midiEvent, width, height);
 
             Dispatcher.Invoke(() =>
             {
@@ -136,8 +137,18 @@ namespace MidiVisualizerApp
             Dispatcher.Invoke(() =>
             {
                 UpdateFps();
+                
                 if (EnableLoggingCheckBox.IsChecked == true)
+                {
+                    if (_logger is RedisLogger redisLogger && !redisLogger.IsAvailable)
+                    {
+                        MessageBox.Show("Redis не доступний. Логування буде вимкнено.", "Помилка логування",
+            MessageBoxButton.OK, MessageBoxImage.Warning);
+                        EnableLoggingCheckBox.IsChecked = false;
+                        return;
+                    }
                     _logger?.Log(midiEvent);
+                }                    
             });
         }
 

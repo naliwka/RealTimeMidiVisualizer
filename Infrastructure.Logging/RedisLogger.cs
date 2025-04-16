@@ -7,20 +7,45 @@ namespace Infrastructure.Logging
 {
     public class RedisLogger : IEventLogger
     {
-        private readonly ConnectionMultiplexer _redis;
-        private readonly IDatabase _db;
+        private ConnectionMultiplexer? _redis;
+        private IDatabase? _db;
+        private bool _isConnected = false;
+        private readonly string _connectionString;
 
+        public bool IsAvailable => _isConnected && _db != null;
 
         public RedisLogger(string connectionString = "localhost:6379")
         {
-            _redis = ConnectionMultiplexer.Connect(connectionString);
-            _db = _redis.GetDatabase();
+            _connectionString = connectionString;
+            TryToConnect();
+        }
+
+        private void TryToConnect()
+        {
+            try
+            {
+                _redis = ConnectionMultiplexer.Connect(_connectionString);
+                _db = _redis.GetDatabase();
+                _isConnected = true;
+            }
+            catch (RedisConnectionException)
+            {
+                _isConnected = false;
+            }
         }
 
         public void Log(MidiEventData midiEvent)
         {
-            string json = JsonSerializer.Serialize(midiEvent);
-            _db.ListLeftPush("midi_logs", json);
+            if (!_isConnected || _db == null)
+            {
+                TryToConnect();
+                if (!_isConnected || _db == null) return;
+            }
+            if (_db != null)
+            {
+                string json = JsonSerializer.Serialize(midiEvent);
+                _db.ListLeftPush("midi_logs", json);
+            }           
         }
     }
 }
