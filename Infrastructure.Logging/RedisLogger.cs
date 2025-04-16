@@ -34,7 +34,7 @@ namespace Infrastructure.Logging
             }
         }
 
-        public void Log(MidiEventData midiEvent)
+        async public void Log(MidiEventData midiEvent)
         {
             if (!_isConnected || _db == null)
             {
@@ -44,7 +44,7 @@ namespace Infrastructure.Logging
             if (_db != null)
             {
                 string json = JsonSerializer.Serialize(midiEvent);
-                _db.ListLeftPush("midi_logs", json);
+                await _db.ListLeftPushAsync("midi_logs", json);
             }           
         }
     }
