@@ -9,14 +9,14 @@ namespace Core.MIDIProcessing.Visualization
 {
     public static class VisualizerFactory
     {
-        public static IVisualizer CreateVisualizer(VisualizerType type, double windowWidth, double windowHeight, NoteColorProvider? provider = null)
+        public static IVisualizer CreateVisualizer(VisualizerType type, NoteColorProvider? provider = null)
         {
             switch (type)
             {
                 case VisualizerType.Bubbles:
-                    return new BubbleVisualizer(windowWidth, windowHeight, provider);
+                    return new BubbleVisualizer(provider);
                 case VisualizerType.ColorBars:
-                    return new ColorBarsVisualizer(windowWidth, windowHeight, provider);
+                    return new ColorBarsVisualizer(provider);
                 default:
                     throw new ArgumentException("Unknown visualizer type");
             }

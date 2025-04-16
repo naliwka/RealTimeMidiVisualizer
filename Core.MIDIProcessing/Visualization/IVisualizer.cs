@@ -4,6 +4,6 @@ namespace Core.MIDIProcessing.Visualization
 {
     public interface IVisualizer
     {
-        List<VisualElementData> GenerateVisual(MidiEventData midiEvent);
+        List<VisualElementData> GenerateVisual(MidiEventData midiEvent, double windowWidth, double windowHeight);
     }
 }

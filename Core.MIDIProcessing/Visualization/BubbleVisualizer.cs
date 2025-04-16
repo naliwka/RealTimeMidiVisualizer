@@ -5,24 +5,21 @@ namespace Core.MIDIProcessing.Visualization
 {
     public class BubbleVisualizer : IVisualizer
     {
-        private readonly double _windowWidth;
-        private readonly double _windowHeight;
+
         private readonly NoteColorProvider _colorProvider;
 
-        public BubbleVisualizer(double windowWidth, double windowHeight, NoteColorProvider colorProvider)
+        public BubbleVisualizer(NoteColorProvider colorProvider)
         {
-            _windowWidth = windowWidth;
-            _windowHeight = windowHeight;
             _colorProvider = colorProvider ?? new NoteColorProvider();
         }
-        public List<VisualElementData> GenerateVisual(MidiEventData midiEvent)
+        public List<VisualElementData> GenerateVisual(MidiEventData midiEvent, double windowWidth, double windowHeight)
         {
             var rnd = new Random();
 
             var bubble = new VisualElementData
             {
-                X = rnd.NextDouble() * _windowWidth,
-                Y = GetNoteY(midiEvent.NoteNumber),
+                X = rnd.NextDouble() * windowWidth,
+                Y = GetNoteY(midiEvent.NoteNumber, windowHeight),
                 Size = MapVelocityToSize(midiEvent.Velocity),
                 ColorHex = _colorProvider.GetColorForNote(midiEvent.Note),
                 Shape = "Circle",
@@ -38,10 +35,10 @@ namespace Core.MIDIProcessing.Visualization
             return minSize + velocity / 127.0 * (maxSize - minSize);
         }
 
-        private double GetNoteY(int noteNumber)
+        private double GetNoteY(int noteNumber, double windowHeight)
         {
             double noteHeight = noteNumber / 127.0;
-            return _windowHeight * (1.0 - noteHeight);
+            return windowHeight * (1.0 - noteHeight);
         }
     }
 }

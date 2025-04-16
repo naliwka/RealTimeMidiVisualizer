@@ -10,21 +10,17 @@ namespace Core.MIDIProcessing.Visualization
 {
     public class ColorBarsVisualizer : IVisualizer
     {
-        private readonly double _windowWidth;
-        private readonly double _windowHeight;
         private readonly NoteColorProvider _colorProvider;
 
         private readonly List<VisualElementData> _bars = new();
         private const double ShiftSpeed = 20;
 
-        public ColorBarsVisualizer(double windowWidth, double windowHeight, NoteColorProvider colorProvider)
+        public ColorBarsVisualizer(NoteColorProvider colorProvider)
         {
-            _windowWidth = windowWidth;
-            _windowHeight = windowHeight;
             _colorProvider = _colorProvider ?? new NoteColorProvider();
         }
 
-        public List<VisualElementData> GenerateVisual(MidiEventData midiEvent)
+        public List<VisualElementData> GenerateVisual(MidiEventData midiEvent, double windowWidth, double windowHeight)
         {
             for (int i = _bars.Count - 1; i >= 0; i--)
             {
@@ -37,13 +33,13 @@ namespace Core.MIDIProcessing.Visualization
                 }
             }
             
-            double barHeight = MapVelocityToHeight(midiEvent.Velocity);
-            double barX = _windowWidth;
+            double barHeight = MapVelocityToHeight(midiEvent.Velocity, windowHeight);
+            double barX = windowWidth;
 
             var newBar = new VisualElementData
             {
                 X = barX,
-                Y = _windowHeight - barHeight,
+                Y = windowHeight - barHeight,
                 Size = barHeight,
                 ColorHex = _colorProvider.GetColorForNote(midiEvent.Note),
                 Shape = "Rectangle",
@@ -53,10 +49,10 @@ namespace Core.MIDIProcessing.Visualization
             return new List<VisualElementData>(_bars);
         }
 
-        private double MapVelocityToHeight(int velocity)
+        private double MapVelocityToHeight(int velocity, double windowHeight)
         {
             const double minHeight = 20;
-            double maxHeight = _windowHeight * 0.7;
+            double maxHeight = windowHeight * 0.7;
             double actualHeight = minHeight + velocity / 127.0 * (maxHeight - minHeight);
 
             return actualHeight;
