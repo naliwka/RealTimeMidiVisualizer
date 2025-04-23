@@ -1,6 +1,5 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media;
 using System.Windows.Shapes;
 using System.Windows.Threading;
 using Core.MIDIProcessing;
@@ -9,10 +8,8 @@ using NAudio.Midi;
 using Infrastructure.Logging;
 using Core.MIDIProcessing.Visualization;
 using MidiVisualizerApp.Models;
-using System.Windows.Media.Media3D;
 using Core.MIDIProcessing.Helpers;
 using MidiVisualizerApp.Helpers;
-using Core.MIDIProcessing.Logging;
 using Core.MIDIProcessing.Models;
 
 namespace MidiVisualizerApp

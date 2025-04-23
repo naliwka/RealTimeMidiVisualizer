@@ -1,6 +1,6 @@
 ﻿using Core.MIDIProcessing.Models;
 
-namespace Core.MIDIProcessing.Logging
+namespace Infrastructure.Logging
 {
     public interface IEventLogger
     {
