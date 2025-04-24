@@ -139,7 +139,7 @@ namespace MidiVisualizerApp
                 {
                     if (_logger is RedisLogger redisLogger && !redisLogger.IsAvailable)
                     {
-                        MessageBox.Show("Redis не доступний. Логування буде вимкнено.", "Помилка логування",
+                        MessageBox.Show("Redis is not available. Logging will be disabled.", "Logging error",
             MessageBoxButton.OK, MessageBoxImage.Warning);
                         EnableLoggingCheckBox.IsChecked = false;
                         return;
