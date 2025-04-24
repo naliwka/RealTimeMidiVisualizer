@@ -8,6 +8,5 @@
         public string? ColorHex { get; set; }
         public string? Shape { get; set; }
         public double Opacity { get; set; }
-        public double Rotation { get; set; }
     }
 }
