@@ -27,8 +27,12 @@ namespace Core.MIDIProcessing.Visualization
                     _bars.RemoveAt(i);
                 }
             }
-            
-            double barHeight = MapVelocityToHeight(midiEvent.Velocity, windowHeight);
+            double minHeight = 20;
+            double maxHeight = windowHeight * 0.7;
+            double barHeight = Mapper.MapToRange(midiEvent.Velocity, minHeight, maxHeight);
+
+            // double barHeight = MapVelocityToHeight(midiEvent.Velocity, windowHeight);
+
             double barX = windowWidth;
 
             var newBar = new VisualElementData
@@ -44,13 +48,13 @@ namespace Core.MIDIProcessing.Visualization
             return new List<VisualElementData>(_bars);
         }
 
-        private double MapVelocityToHeight(int velocity, double windowHeight)
-        {
-            const double minHeight = 20;
-            double maxHeight = windowHeight * 0.7;
-            double actualHeight = minHeight + velocity / 127.0 * (maxHeight - minHeight);
+        //private double MapVelocityToHeight(int velocity, double windowHeight)
+        //{
+        //    const double minHeight = 20;
+        //    double maxHeight = windowHeight * 0.7;
+        //    double actualHeight = minHeight + velocity / 127.0 * (maxHeight - minHeight);
 
-            return actualHeight;
-        }
+        //    return actualHeight;
+        //}
     }
 }
