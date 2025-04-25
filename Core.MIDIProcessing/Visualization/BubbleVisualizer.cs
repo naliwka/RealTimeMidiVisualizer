@@ -22,7 +22,6 @@ namespace Core.MIDIProcessing.Visualization
             {
                 X = rnd.NextDouble() * windowWidth,
                 Y = GetNoteY(midiEvent.NoteNumber, windowHeight),
-                // Size = MapVelocityToSize(midiEvent.Velocity),
                 Size = Mapper.MapToRange(midiEvent.Velocity, minSize, maxSize),
                 ColorHex = _colorProvider.GetColorForNote(midiEvent.Note),
                 Shape = "Circle",
@@ -30,13 +29,6 @@ namespace Core.MIDIProcessing.Visualization
             };
             return new List<VisualElementData> { bubble };
         }
-
-        //private double MapVelocityToSize(int velocity)
-        //{
-        //    double minSize = 3;
-        //    double maxSize = 150;
-        //    return minSize + velocity / 127.0 * (maxSize - minSize);
-        //}
 
         private double GetNoteY(int noteNumber, double windowHeight)
         {
